@@ -184,11 +184,17 @@ const App = () => {
 					ICConverter
 				</Typography>
 				<div>
-					<Tooltip content="Github do projeto" placement="bottom">
-						<IconButton color="indigo">
-							<FaGithub />
-						</IconButton>
-					</Tooltip>
+					<Typography
+						as="a"
+						href="https://github.com/JaianeOliveira/icconverter"
+						target="_blank"
+					>
+						<Tooltip content="Github do projeto" placement="bottom">
+							<IconButton color="indigo" ripple>
+								<FaGithub />
+							</IconButton>
+						</Tooltip>
+					</Typography>
 				</div>
 			</header>
 
