@@ -1,17 +1,18 @@
 import {
 	Button,
 	Card,
-	IconButton,
 	Input,
 	Option,
 	Select,
-	Tooltip,
 	Typography,
 } from '@material-tailwind/react';
 import { ChangeEvent, ReactNode, useState } from 'react';
-import { FaGithub, FaRegCopy } from 'react-icons/fa';
-import { ToastContainer } from 'react-toastify';
+import { FaRegCopy } from 'react-icons/fa';
+import Footer from './components/Footer';
+import Header from './components/Header';
 import Notification, { NotificationTypes } from './components/Notification';
+import { bases } from './shared/constants';
+import { Bases } from './shared/types';
 import {
 	binaryToDecimal,
 	charToDecimal,
@@ -22,31 +23,6 @@ import {
 	hexadecimalToDecimal,
 	octalToDecimal,
 } from './utils';
-
-const bases = [
-	{
-		key: 'decimal',
-		label: 'Decimal',
-	},
-	{
-		key: 'binary',
-		label: 'Binário',
-	},
-	{
-		key: 'octal',
-		label: 'Octal',
-	},
-	{
-		key: 'hexadecimal',
-		label: 'Hexadecimal',
-	},
-	{
-		key: 'char',
-		label: 'Caractere',
-	},
-];
-
-type Bases = 'decimal' | 'binary' | 'octal' | 'hexadecimal' | 'char';
 
 type FormProps = {
 	from: Bases | undefined;
@@ -66,7 +42,6 @@ const App = () => {
 		message: string;
 		type: NotificationTypes;
 	} | null>(null);
-	const [copied, setCopied] = useState<string | null>(null);
 
 	const setFormHandler = (
 		key: string,
@@ -89,74 +64,55 @@ const App = () => {
 
 		if (form.from === 'decimal') {
 			const parsedNumber = Number(form.data);
-			if (isNaN(parsedNumber)) {
+
+			if (isNaN(parsedNumber))
 				showNotification(
 					'O valor inserido para conversão não é um decimal',
 					'error'
 				);
-			} else if (form.to === 'binary') {
-				result = decimalToBinary(parsedNumber);
-			} else if (form.to === 'char') {
-				result = decimalToChar(parsedNumber);
-			} else if (form.to === 'hexadecimal') {
+			else if (form.to === 'binary') result = decimalToBinary(parsedNumber);
+			else if (form.to === 'char') result = decimalToChar(parsedNumber);
+			else if (form.to === 'hexadecimal')
 				result = decimalToHexadecimal(parsedNumber);
-			} else if (form.to === 'octal') {
-				result = decimalToOctal(parsedNumber);
-			}
+			else if (form.to === 'octal') result = decimalToOctal(parsedNumber);
 		}
 
 		if (form.from === 'binary') {
 			const decimal = binaryToDecimal(form.data);
-			if (form.to === 'decimal') {
-				result = decimal;
-			} else if (form.to === 'char') {
-				result = decimalToChar(decimal);
-			} else if (form.to === 'hexadecimal') {
+			if (form.to === 'decimal') result = decimal;
+			else if (form.to === 'char') result = decimalToChar(decimal);
+			else if (form.to === 'hexadecimal')
 				result = decimalToHexadecimal(decimal);
-			} else if (form.to === 'octal') {
-				result = decimalToOctal(decimal);
-			}
+			else if (form.to === 'octal') result = decimalToOctal(decimal);
 		}
 
 		if (form.from === 'char') {
 			const decimal = charToDecimal(form.data);
 
-			if (form.to === 'decimal') {
-				result = decimal;
-			} else if (form.to === 'binary') {
-				result = decimalToBinary(decimal);
-			} else if (form.to === 'hexadecimal') {
+			if (form.to === 'decimal') result = decimal;
+			else if (form.to === 'binary') result = decimalToBinary(decimal);
+			else if (form.to === 'hexadecimal')
 				result = decimalToHexadecimal(decimal);
-			} else if (form.to === 'octal') {
-				result = decimalToOctal(decimal);
-			}
+			else if (form.to === 'octal') result = decimalToOctal(decimal);
 		}
 
 		if (form.from === 'hexadecimal') {
 			const decimal = hexadecimalToDecimal(form.data);
-			if (form.to === 'decimal') {
-				result = decimal;
-			} else if (form.to === 'binary') {
-				result = decimalToBinary(decimal);
-			} else if (form.to === 'octal') {
-				result = decimalToOctal(decimal);
-			} else if (form.to === 'char') {
-				result = decimalToChar(decimal);
-			}
+			if (form.to === 'decimal') result = decimal;
+			else if (form.to === 'binary') result = decimalToBinary(decimal);
+			else if (form.to === 'octal') result = decimalToOctal(decimal);
+			else if (form.to === 'char') result = decimalToChar(decimal);
 		}
 
 		if (form.from === 'octal') {
 			const decimal = octalToDecimal(form.data);
-			if (form.to === 'decimal') {
-				result = decimal;
-			} else if (form.to === 'binary') {
-				result = decimalToBinary(decimal);
-			} else if (form.to === 'hexadecimal') {
+			if (form.to === 'decimal') result = decimal;
+			else if (form.to === 'binary') result = decimalToBinary(decimal);
+			else if (form.to === 'hexadecimal')
 				result = decimalToHexadecimal(decimal);
-			} else if (form.to === 'char') {
-				result = decimalToChar(decimal);
-			}
+			else if (form.to === 'char') result = decimalToChar(decimal);
 		}
+
 		setFormHandler('result', result);
 	};
 
@@ -165,49 +121,27 @@ const App = () => {
 		navigator.clipboard.writeText(form.result);
 		showNotification('Copiado', 'success');
 	};
+
 	return (
-		<div className="w-full h-[100vh] gap-4 bg-gray-900 flex flex-col">
+		<div className="screen-container">
 			<Notification
 				type={notification?.type}
 				message={notification?.message}
 				setShow={setNotification}
 			/>
+			<Header />
 
-			<header
-				className="w-full flex items-center justify-between px-[6vw] py-4
-      "
-			>
-				<Typography
-					className="text-indigo-50 font-light uppercase text-xs tracking-widest"
-					as="h5"
-				>
-					ICConverter
-				</Typography>
-				<div>
-					<Typography
-						as="a"
-						href="https://github.com/JaianeOliveira/icconverter"
-						target="_blank"
-					>
-						<Tooltip content="Github do projeto" placement="bottom">
-							<IconButton color="indigo" ripple>
-								<FaGithub />
-							</IconButton>
-						</Tooltip>
-					</Typography>
-				</div>
-			</header>
-
-			<main className="w-full h-full px-[8vw] py-10 flex justify-center items-start">
-				<ToastContainer />
-				<Card className="flex flex-col gap-4 p-8 lg:w-auto w-full h-auto">
+			<main className="main-container">
+				<Card className="card">
 					<Typography as="p">Preencha os campos:</Typography>
-					<form className="flex flex-col lg:flex-row gap-4">
+
+					<div className="form">
 						<Input
 							color="indigo"
 							label="Converter"
 							onChange={(e) => setFormHandler('data', e.target.value)}
 						/>
+
 						<Select
 							label="De "
 							color="indigo"
@@ -219,6 +153,7 @@ const App = () => {
 								</Option>
 							))}
 						</Select>
+
 						<Select
 							label="Para "
 							color="indigo"
@@ -230,10 +165,12 @@ const App = () => {
 								</Option>
 							))}
 						</Select>
-					</form>
+					</div>
+
 					<Button color="indigo" variant="gradient" onClick={converterHandler}>
 						Converter
 					</Button>
+
 					<Input
 						label="Resultado"
 						contentEditable={false}
@@ -248,11 +185,8 @@ const App = () => {
 					/>
 				</Card>
 			</main>
-			<footer className="w-full px-[4vw] py-4 self-end flex items-center justify-end">
-				<Typography as="span" className="text-gray-800 text-xs">
-					&copy; <a>Jaiane Oliveira</a>, 2022
-				</Typography>
-			</footer>
+
+			<Footer />
 		</div>
 	);
 };
